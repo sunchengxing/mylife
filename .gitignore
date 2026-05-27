@@ -6,3 +6,8 @@ android/.gradle/
 android/build/
 android/app/build/
 desktop/build/
+*.db
+*.db-shm
+*.db-wal
+mylife-server
+backend/mylife-server

@@ -1,5 +1,6 @@
 const ClothingPage = {
   async render() {
+    SearchFilter.clearFilters();
     const items = await dbGetAll("clothing");
     const container = document.getElementById("page-content");
 
@@ -13,8 +14,18 @@ const ClothingPage = {
       return;
     }
 
-    container.innerHTML = items.map((item, i) => `
+    container.innerHTML = SearchFilter.renderBar("clothing") +
+      SearchFilter.renderSummary(items, "clothing") +
+      this._renderCards(items);
+    setLang(currentLang);
+    SearchFilter.bindEvents(ClothingPage, "clothing");
+  },
+
+  _renderCards(items) {
+    const filtered = SearchFilter.filterItems(items);
+    return filtered.map((item, i) => `
       <div class="card fade-in" style="animation-delay:${Math.min(i * 40, 300)}ms" data-id="${item.id}">
+        ${item.photo ? `<img src="${item.photo}" style="width:100%;max-height:180px;object-fit:cover;border-radius:var(--radius-md);margin-bottom:8px">` : ""}
         <div style="display:flex;justify-content:space-between;align-items:flex-start">
           <div>
             <div class="card-title">${esc(item.name)}</div>
@@ -32,8 +43,16 @@ const ClothingPage = {
         </div>
         ${item.note ? `<div class="card-body">${esc(item.note)}</div>` : ""}
       </div>`).join("");
+  },
 
+  async renderFiltered() {
+    const items = await dbGetAll("clothing");
+    const container = document.getElementById("page-content");
+    container.innerHTML = SearchFilter.renderBar("clothing") +
+      SearchFilter.renderSummary(items, "clothing") +
+      this._renderCards(items);
     setLang(currentLang);
+    SearchFilter.bindEvents(ClothingPage, "clothing");
   },
 
   showModal(item) {
@@ -51,6 +70,7 @@ const ClothingPage = {
           <div class="form-group"><label class="form-label" data-i18n="clothing.season">${t("clothing.season")}</label><input class="form-input" id="f-season" value="${esc(item?.season || "")}"></div>
           <div class="form-group"><label class="form-label" data-i18n="clothing.cost">${t("clothing.cost")}</label><input class="form-input" id="f-cost" type="number" value="${item?.cost || ""}"></div>
           <div class="form-group"><label class="form-label" data-i18n="clothing.note">${t("clothing.note")}</label><textarea class="form-input" id="f-note">${esc(item?.note || "")}</textarea></div>
+          ${photoInputHTML(item?.photo || "")}
         </div>
         <div class="modal-footer">
           <button class="btn-icon" style="width:auto;padding:6px 16px;font-size:13px" data-i18n="clothing.cancel" onclick="this.closest('.modal-overlay').remove()">${t("clothing.cancel")}</button>
@@ -70,6 +90,7 @@ const ClothingPage = {
         season: document.getElementById("f-season").value.trim(),
         cost: document.getElementById("f-cost").value || "",
         note: document.getElementById("f-note").value.trim(),
+        photo: getPhotoFromPreview(),
         created_at: item?.created_at || new Date().toISOString(),
         updated_at: new Date().toISOString(),
       };

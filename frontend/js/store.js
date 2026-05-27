@@ -64,6 +64,16 @@ async function dbCount(store) {
   });
 }
 
+async function dbGetById(store, id) {
+  const d = await openDB();
+  return new Promise((resolve, reject) => {
+    const tx = d.transaction(store, "readonly");
+    const req = tx.objectStore(store).get(id);
+    req.onsuccess = () => resolve(req.result || null);
+    req.onerror = () => reject(req.error);
+  });
+}
+
 function genId() {
   return Date.now().toString(36) + Math.random().toString(36).slice(2, 8);
 }

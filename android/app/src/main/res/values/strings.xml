@@ -1,0 +1,8 @@
+<resources>
+    <string name="app_name">衣食住行</string>
+    <string name="tab_clothing">衣</string>
+    <string name="tab_food">食</string>
+    <string name="tab_housing">住</string>
+    <string name="tab_transport">行</string>
+    <string name="tab_profile">我的</string>
+</resources>

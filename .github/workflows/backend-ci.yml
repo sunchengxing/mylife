@@ -1,0 +1,47 @@
+name: Backend CI
+
+on:
+  push:
+    branches: [master]
+    paths:
+      - 'backend/**'
+      - '.github/workflows/backend-ci.yml'
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: '1.22'
+
+      - name: Build
+        working-directory: backend
+        run: go build -o mylife-server .
+
+      - name: Vet
+        working-directory: backend
+        run: go vet ./...
+
+      - name: Test server startup
+        working-directory: backend
+        run: |
+          ./mylife-server &
+          sleep 2
+          curl -sf http://localhost:8080/ | head -1
+          curl -sf -X POST http://localhost:8080/api/auth/register \
+            -H 'Content-Type: application/json' \
+            -d '{"username":"ci","password":"ci12345"}'
+          kill %1
+
+      - name: Upload binary
+        uses: actions/upload-artifact@v4
+        with:
+          name: mylife-server-linux
+          path: backend/mylife-server
+          retention-days: 7
