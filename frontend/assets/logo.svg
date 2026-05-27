@@ -1,0 +1,45 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
+  <style>
+    .icon { fill: none; stroke: #1d1d1f; stroke-width: 2.5; stroke-linecap: round; stroke-linejoin: round; }
+    .char { font-family: "PingFang SC","Hiragino Sans GB","Microsoft YaHei","Noto Sans CJK SC",sans-serif; font-weight: 600; fill: #1d1d1f; }
+    .char-sm { font-family: "PingFang SC","Hiragino Sans GB","Microsoft YaHei","Noto Sans CJK SC",sans-serif; font-weight: 300; fill: #6e6e73; }
+  </style>
+
+  <!-- Background -->
+  <rect width="512" height="512" rx="96" fill="#f5f5f7"/>
+
+  <!-- Grid: 2x2 田字格 -->
+  <!-- Divider lines -->
+  <line x1="256" y1="60" x2="256" y2="452" stroke="#e8e8ed" stroke-width="1"/>
+  <line x1="60" y1="256" x2="452" y2="256" stroke="#e8e8ed" stroke-width="1"/>
+
+  <!-- ─── 衣 (top-left) ─── -->
+  <!-- Shirt icon -->
+  <path class="icon" d="M140,110 L128,110 L118,130 L135,138 L128,200 L172,200 L165,138 L182,130 L172,110 L160,110 L156,120 Q150,128 144,120 Z"/>
+  <text class="char" x="150" y="232" text-anchor="middle" font-size="32">衣</text>
+
+  <!-- ─── 食 (top-right) ─── -->
+  <!-- Bowl icon -->
+  <path class="icon" d="M300,148 Q300,190 346,190 Q392,190 392,148 Z"/>
+  <line class="icon" x1="326" y1="130" x2="326" y2="148"/>
+  <path class="icon" d="M336,124 Q346,118 356,124" fill="none"/>
+  <line class="icon" x1="366" y1="130" x2="366" y2="148"/>
+  <text class="char" x="346" y="232" text-anchor="middle" font-size="32">食</text>
+
+  <!-- ─── 住 (bottom-left) ─── -->
+  <!-- House icon -->
+  <path class="icon" d="M112,330 L150,290 L188,330 Z"/>
+  <rect class="icon" x="122" y="330" width="56" height="44" rx="2"/>
+  <rect class="icon" x="140" y="352" width="20" height="22" rx="1"/>
+  <text class="char" x="150" y="400" text-anchor="middle" font-size="32">住</text>
+
+  <!-- ─── 行 (bottom-right) ─── -->
+  <!-- Road/path icon -->
+  <path class="icon" d="M310,380 Q330,340 346,310 Q358,280 380,290 Q396,298 390,320 L386,330"/>
+  <circle class="icon" cx="386" cy="338" r="5"/>
+  <line class="icon" x1="310" y1="380" x2="318" y2="370"/>
+  <text class="char" x="346" y="400" text-anchor="middle" font-size="32">行</text>
+
+  <!-- Bottom label -->
+  <text class="char-sm" x="256" y="472" text-anchor="middle" font-size="16" letter-spacing="8">衣食住行</text>
+</svg>

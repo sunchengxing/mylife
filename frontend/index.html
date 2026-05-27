@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-theme="light">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <meta name="theme-color" content="#f5f5f7" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+  <title>衣食住行</title>
+  <link rel="icon" type="image/svg+xml" href="assets/logo.svg" />
+  <link rel="apple-touch-icon" href="assets/logo.svg" />
+  <link rel="stylesheet" href="css/reset.css" />
+  <link rel="stylesheet" href="css/layout.css" />
+</head>
+<body>
+  <div id="app" class="app">
+    <header class="topbar">
+      <span class="topbar-title" data-i18n="app.title">衣食住行</span>
+      <div class="topbar-actions">
+        <button class="btn-icon" id="btn-lang" title="语言">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3a15 15 0 014 9 15 15 0 01-4 9 15 15 0 01-4-9 15 15 0 014-9z"/></svg>
+        </button>
+        <button class="btn-icon" id="btn-theme" title="主题">
+          <svg id="icon-theme" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M21 12.79A9 9 0 0111.21 3 7 7 0 1012 21a9 9 0 009-8.21z"/></svg>
+        </button>
+      </div>
+    </header>
+
+    <main class="content" id="page-content"></main>
+
+    <nav class="tabbar" id="tabbar">
+      <button class="tabbar-item active" data-tab="clothing">
+        <svg class="tabbar-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M6 2l-4 4 4 2v12h8V8l4-2 4-4h-4l-2 2H8L6 2z"/></svg>
+        <span class="tabbar-label" data-i18n="tab.clothing">衣</span>
+      </button>
+      <button class="tabbar-item" data-tab="food">
+        <svg class="tabbar-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M3 13h18M3 13c0 4 4 7 9 7s9-3 9-7M12 4v9M8 4c0 2 4 3 4 3s4-1 4-3"/></svg>
+        <span class="tabbar-label" data-i18n="tab.food">食</span>
+      </button>
+      <button class="tabbar-item" data-tab="housing">
+        <svg class="tabbar-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M3 12l9-8 9 8M5 10v10h14V10M9 20v-6h6v6"/></svg>
+        <span class="tabbar-label" data-i18n="tab.housing">住</span>
+      </button>
+      <button class="tabbar-item" data-tab="transport">
+        <svg class="tabbar-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="6" cy="17" r="2"/><circle cx="18" cy="17" r="2"/><path d="M6 15H4V8l3-5h8l3 5v7h-2M4 8h14M6 15h12M10 3v5M14 3v5"/></svg>
+        <span class="tabbar-label" data-i18n="tab.transport">行</span>
+      </button>
+      <button class="tabbar-item" data-tab="profile">
+        <svg class="tabbar-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="8" r="4"/><path d="M4 21v-1a6 6 0 0112 0v1"/></svg>
+        <span class="tabbar-label" data-i18n="tab.profile">我的</span>
+      </button>
+    </nav>
+  </div>
+
+  <script src="js/i18n.js"></script>
+  <script src="js/store.js"></script>
+  <script src="js/api.js"></script>
+  <script src="js/pages/clothing.js"></script>
+  <script src="js/pages/food.js"></script>
+  <script src="js/pages/housing.js"></script>
+  <script src="js/pages/transport.js"></script>
+  <script src="js/pages/profile.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>

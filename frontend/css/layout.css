@@ -1,0 +1,130 @@
+/* ─── Theme + Layout ─── */
+
+.app {
+  display: flex; flex-direction: column; height: 100%;
+  background: var(--bg-secondary);
+}
+
+/* ─── Top Bar ─── */
+.topbar {
+  height: 48px; display: flex; align-items: center;
+  justify-content: space-between; padding: 0 16px;
+  background: var(--bg-primary); border-bottom: 1px solid var(--divider);
+  flex-shrink: 0;
+}
+.topbar-title {
+  font-size: 17px; font-weight: 600; letter-spacing: -0.3px;
+}
+.topbar-actions { display: flex; gap: 4px; }
+
+/* ─── Content ─── */
+.content {
+  flex: 1; overflow: auto; padding: 16px;
+}
+
+/* ─── Tab Bar ─── */
+.tabbar {
+  height: var(--tabbar-height); display: flex;
+  background: var(--bg-primary); border-top: 1px solid var(--divider);
+  flex-shrink: 0;
+}
+.tabbar-item {
+  flex: 1; display: flex; flex-direction: column;
+  align-items: center; justify-content: center; gap: 3px;
+  color: var(--text-tertiary); transition: color var(--transition);
+  -webkit-tap-highlight-color: transparent;
+}
+.tabbar-item.active { color: var(--text-primary); }
+.tabbar-icon { width: 22px; height: 22px; }
+.tabbar-label { font-size: 10px; font-weight: 500; }
+
+/* ─── Card ─── */
+.card {
+  background: var(--bg-card); border: 1px solid var(--border);
+  border-radius: var(--radius-lg); box-shadow: var(--shadow-sm);
+  padding: 16px; margin-bottom: 10px;
+  transition: box-shadow var(--transition);
+}
+.card:hover { box-shadow: var(--shadow-md); }
+
+.card-title { font-size: 15px; font-weight: 500; margin-bottom: 4px; }
+.card-meta { font-size: 12px; color: var(--text-tertiary); }
+.card-body { font-size: 13px; line-height: 1.6; color: var(--text-secondary); margin-top: 8px; }
+
+/* ─── Empty State ─── */
+.empty-state {
+  display: flex; flex-direction: column; align-items: center;
+  justify-content: center; padding: 60px 20px;
+  color: var(--text-tertiary); text-align: center;
+}
+.empty-state-icon { width: 48px; height: 48px; margin-bottom: 12px; opacity: 0.4; }
+.empty-state-text { font-size: 14px; }
+
+/* ─── FAB ─── */
+.fab {
+  position: fixed; bottom: calc(var(--tabbar-height) + 16px);
+  right: 20px; width: 48px; height: 48px; border-radius: 50%;
+  background: var(--text-primary); color: var(--bg-primary);
+  display: flex; align-items: center; justify-content: center;
+  box-shadow: var(--shadow-md); transition: all var(--transition);
+  z-index: 10;
+}
+.fab:hover { transform: scale(1.05); box-shadow: var(--shadow-md); }
+.fab svg { width: 22px; height: 22px; }
+
+/* ─── Button ─── */
+.btn-icon {
+  width: 32px; height: 32px; border-radius: var(--radius-sm);
+  display: flex; align-items: center; justify-content: center;
+  color: var(--text-secondary); transition: all var(--transition);
+}
+.btn-icon:hover { background: var(--bg-hover); color: var(--text-primary); }
+.btn-icon svg { width: 16px; height: 16px; }
+
+/* ─── Modal ─── */
+.modal-overlay {
+  position: fixed; inset: 0; background: rgba(0,0,0,0.3);
+  display: flex; align-items: flex-end; justify-content: center;
+  z-index: 100;
+}
+.modal {
+  width: 100%; max-width: 480px; background: var(--bg-primary);
+  border-radius: var(--radius-xl) var(--radius-xl) 0 0;
+  padding: 24px; max-height: 80vh; overflow: auto;
+}
+.modal-header {
+  display: flex; justify-content: space-between; align-items: center;
+  margin-bottom: 16px;
+}
+.modal-title { font-size: 17px; font-weight: 600; }
+.modal-body { display: flex; flex-direction: column; gap: 12px; }
+.modal-footer { display: flex; justify-content: flex-end; gap: 8px; margin-top: 16px; }
+
+/* ─── Form ─── */
+.form-group { display: flex; flex-direction: column; gap: 4px; }
+.form-label { font-size: 12px; font-weight: 500; color: var(--text-secondary); }
+.form-input {
+  padding: 10px 12px; border-radius: var(--radius-sm);
+  border: 1px solid var(--border); background: var(--bg-secondary);
+  font-size: 14px; color: var(--text-primary);
+}
+.form-input:focus { border-color: var(--text-secondary); }
+textarea.form-input { resize: vertical; min-height: 80px; }
+
+/* ─── Tag ─── */
+.tag {
+  display: inline-flex; padding: 3px 10px; border-radius: 12px;
+  font-size: 11px; font-weight: 500;
+  background: var(--bg-tertiary); color: var(--text-secondary);
+}
+
+/* ─── Stats ─── */
+.stats-grid {
+  display: grid; grid-template-columns: 1fr 1fr; gap: 10px;
+}
+.stat-card {
+  background: var(--bg-card); border: 1px solid var(--border);
+  border-radius: var(--radius-md); padding: 14px;
+}
+.stat-value { font-size: 22px; font-weight: 600; letter-spacing: -0.5px; }
+.stat-label { font-size: 11px; color: var(--text-tertiary); margin-top: 2px; }
