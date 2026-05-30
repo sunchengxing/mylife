@@ -1,5 +1,6 @@
 package com.mylife.app.ui.screens
 
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -30,15 +31,16 @@ import com.mylife.app.data.recipe.RecipeDto
 import com.mylife.app.viewmodel.RecipeListState
 import com.mylife.app.viewmodel.RecipeViewModel
 
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun FoodScreen(
     vm: RecipeViewModel = viewModel(),
     onRecipeClick: (Long) -> Unit = {},
 ) {
     val state by vm.listState.collectAsState()
+    val error = state.error
 
     Column(modifier = Modifier.fillMaxSize()) {
-        // Search bar
         OutlinedTextField(
             value = state.query,
             onValueChange = { vm.search(it) },
@@ -56,27 +58,32 @@ fun FoodScreen(
             shape = RoundedCornerShape(24.dp),
         )
 
-        // Category chips
         CategoryBar(
             categories = state.categories,
             selected = state.selectedCategory,
             onSelect = { vm.selectCategory(it) },
         )
 
-        // Recipe grid
         Box(modifier = Modifier.fillMaxSize()) {
-            if (state.isLoading && state.items.isEmpty()) {
-                CircularProgressIndicator(
+            when {
+                error != null -> Column(
+                    modifier = Modifier.align(Alignment.Center).padding(24.dp),
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                ) {
+                    Text("加载失败", style = MaterialTheme.typography.titleMedium)
+                    Text(error, style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.error)
+                    Spacer(Modifier.height(12.dp))
+                    Button(onClick = { vm.refresh() }) { Text("重试") }
+                }
+                state.isLoading && state.items.isEmpty() -> CircularProgressIndicator(
                     modifier = Modifier.align(Alignment.Center),
                 )
-            } else if (state.items.isEmpty() && !state.isLoading) {
-                Text(
+                state.items.isEmpty() -> Text(
                     "暂无菜谱",
                     modifier = Modifier.align(Alignment.Center),
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                 )
-            } else {
-                RecipeGrid(
+                else -> RecipeGrid(
                     recipes = state.items,
                     onClick = onRecipeClick,
                     onLoadMore = { vm.loadMore() },
@@ -100,7 +107,6 @@ private fun CategoryBar(
         containerColor = Color.Transparent,
         modifier = Modifier.fillMaxWidth(),
     ) {
-        // "All" tab
         Tab(
             selected = selected == null,
             onClick = { onSelect(null) },
@@ -116,6 +122,7 @@ private fun CategoryBar(
     }
 }
 
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
 private fun RecipeGrid(
     recipes: List<RecipeDto>,
@@ -125,7 +132,6 @@ private fun RecipeGrid(
 ) {
     val gridState = rememberLazyStaggeredGridState()
 
-    // Infinite scroll detection
     LaunchedEffect(gridState, recipes.size) {
         snapshotFlow { gridState.layoutInfo.visibleItemsInfo.lastOrNull()?.index }
             .collect { lastVisible ->
@@ -168,7 +174,6 @@ private fun RecipeCard(recipe: RecipeDto, onClick: () -> Unit) {
         elevation = CardDefaults.cardElevation(defaultElevation = 1.dp),
     ) {
         Column {
-            // Cover image with gradient overlay
             Box(
                 modifier = Modifier.fillMaxWidth().clip(RoundedCornerShape(topStart = 12.dp, topEnd = 12.dp)),
             ) {
@@ -188,14 +193,12 @@ private fun RecipeCard(recipe: RecipeDto, onClick: () -> Unit) {
                         Icon(Icons.Default.Search, null, tint = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.3f))
                     }
                 }
-                // Bottom gradient for text readability
                 Box(
                     modifier = Modifier.fillMaxWidth().height(48.dp).align(Alignment.BottomCenter)
                         .background(Brush.verticalGradient(colors = listOf(Color.Transparent, Color.Black.copy(alpha = 0.5f)))),
                 )
             }
 
-            // Text content
             Column(modifier = Modifier.padding(horizontal = 10.dp, vertical = 8.dp)) {
                 Text(
                     recipe.title,

@@ -29,7 +29,7 @@ data class RecipeDetailState(
 )
 
 class RecipeViewModel(application: Application) : AndroidViewModel(application) {
-    private val repo: RecipeRepository
+    private var repo: RecipeRepository? = null
 
     private val _listState = MutableStateFlow(RecipeListState())
     val listState: StateFlow<RecipeListState> = _listState
@@ -38,29 +38,39 @@ class RecipeViewModel(application: Application) : AndroidViewModel(application) 
     val detailState: StateFlow<RecipeDetailState> = _detailState
 
     init {
-        val db = (application as MyLifeApp).database
-        repo = RecipeRepository(db.cachedRecipeDao(), db.cachedIngredientDao(), db.cachedStepDao())
-        loadCategories()
-        loadRecipes()
+        try {
+            val db = (application as MyLifeApp).database
+            repo = RecipeRepository(db.cachedRecipeDao(), db.cachedIngredientDao(), db.cachedStepDao())
+            loadCategories()
+            loadRecipes()
+        } catch (e: Exception) {
+            _listState.update { it.copy(error = "数据库初始化失败: ${e.message}") }
+        }
     }
 
     fun loadCategories() {
         viewModelScope.launch {
-            val cats = repo.getCategories()
-            _listState.update { it.copy(categories = cats) }
+            try {
+                val cats = repo?.getCategories() ?: emptyList()
+                _listState.update { it.copy(categories = cats) }
+            } catch (e: Exception) {
+                _listState.update { it.copy(error = e.message) }
+            }
         }
     }
 
     fun loadRecipes(page: Int = 1, append: Boolean = false) {
         viewModelScope.launch {
+            val r = repo
+            if (r == null) { _listState.update { it.copy(isLoading = false, error = "未初始化") }; return@launch }
             val state = _listState.value
             _listState.update { it.copy(isLoading = !append && page == 1) }
 
             try {
                 val result = if (state.query.isNotBlank()) {
-                    repo.searchRecipes(state.query, page, 20)
+                    r.searchRecipes(state.query, page, 20)
                 } else {
-                    repo.getRecipes(page, 20, state.selectedCategory)
+                    r.getRecipes(page, 20, state.selectedCategory)
                 }
                 val items = if (append) state.items + result.items else result.items
                 _listState.update { it.copy(
@@ -82,13 +92,14 @@ class RecipeViewModel(application: Application) : AndroidViewModel(application) 
 
     fun refresh() {
         viewModelScope.launch {
+            val r = repo ?: return@launch
             _listState.update { it.copy(isRefreshing = true) }
             try {
                 val state = _listState.value
                 val result = if (state.query.isNotBlank()) {
-                    repo.searchRecipes(state.query, 1, 20)
+                    r.searchRecipes(state.query, 1, 20)
                 } else {
-                    repo.getRecipes(1, 20, state.selectedCategory)
+                    r.getRecipes(1, 20, state.selectedCategory)
                 }
                 _listState.update { it.copy(
                     items = result.items, page = result.page, totalPages = result.totalPages,
@@ -117,9 +128,11 @@ class RecipeViewModel(application: Application) : AndroidViewModel(application) 
 
     fun loadDetail(id: Long) {
         viewModelScope.launch {
+            val r = repo
+            if (r == null) { _detailState.update { RecipeDetailState(error = "未初始化") }; return@launch }
             _detailState.update { RecipeDetailState(isLoading = true) }
             try {
-                val detail = repo.getRecipeDetail(id)
+                val detail = r.getRecipeDetail(id)
                 _detailState.update { RecipeDetailState(detail = detail, isLoading = false) }
             } catch (e: Exception) {
                 _detailState.update { RecipeDetailState(isLoading = false, error = e.message) }
