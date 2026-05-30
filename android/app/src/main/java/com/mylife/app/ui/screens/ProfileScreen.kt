@@ -5,20 +5,23 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.mylife.app.util.ApiClient
 import com.mylife.app.viewmodel.ProfileViewModel
 
 @Composable
 fun ProfileScreen(vm: ProfileViewModel = viewModel()) {
     val stats by vm.stats.collectAsState()
     val auth by vm.auth.collectAsState()
+    val settings by vm.settings.collectAsState()
     var showAuthDialog by remember { mutableStateOf(false) }
     var authMode by remember { mutableStateOf("login") }
 
-    LaunchedEffect(Unit) { vm.loadStats() }
+    LaunchedEffect(Unit) { vm.loadSettings(); vm.loadStats() }
 
     Column(
         modifier = Modifier.fillMaxSize().padding(16.dp).verticalScroll(rememberScrollState()),
@@ -28,7 +31,7 @@ fun ProfileScreen(vm: ProfileViewModel = viewModel()) {
         Card(modifier = Modifier.fillMaxWidth()) {
             Column(
                 modifier = Modifier.padding(16.dp).fillMaxWidth(),
-                horizontalAlignment = androidx.compose.ui.Alignment.CenterHorizontally
+                horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 if (auth.isLoggedIn) {
                     Text("欢迎", style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.onSurfaceVariant)
@@ -61,20 +64,49 @@ fun ProfileScreen(vm: ProfileViewModel = viewModel()) {
 
         // Sync
         if (auth.isLoggedIn) {
-            Text("设置", style = MaterialTheme.typography.labelMedium, color = MaterialTheme.colorScheme.onSurfaceVariant)
             Card(modifier = Modifier.fillMaxWidth()) {
                 Row(
                     modifier = Modifier.padding(12.dp).fillMaxWidth(),
                     horizontalArrangement = Arrangement.SpaceBetween
                 ) {
                     Text("云同步")
-                    Button(
-                        onClick = { vm.sync() },
-                        enabled = !auth.isSyncing
-                    ) { Text(if (auth.isSyncing) "同步中..." else "立即同步") }
+                    Button(onClick = { vm.sync() }, enabled = !auth.isSyncing) {
+                        Text(if (auth.isSyncing) "同步中..." else "立即同步")
+                    }
                 }
                 if (auth.lastSync.isNotBlank()) {
                     Text("上次同步: ${auth.lastSync}", style = MaterialTheme.typography.labelSmall, color = MaterialTheme.colorScheme.onSurfaceVariant, modifier = Modifier.padding(start = 12.dp, bottom = 8.dp))
+                }
+            }
+        }
+
+        // Settings
+        Text("设置", style = MaterialTheme.typography.labelMedium, color = MaterialTheme.colorScheme.onSurfaceVariant)
+        Card(modifier = Modifier.fillMaxWidth()) {
+            Column(modifier = Modifier.padding(12.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                var apiUrl by remember(settings) { mutableStateOf(settings.apiBaseUrl) }
+                var recipeUrl by remember(settings) { mutableStateOf(settings.recipeApiUrl) }
+
+                OutlinedTextField(
+                    value = apiUrl,
+                    onValueChange = { apiUrl = it },
+                    label = { Text("Go 后端地址") },
+                    singleLine = true,
+                    modifier = Modifier.fillMaxWidth(),
+                )
+                OutlinedTextField(
+                    value = recipeUrl,
+                    onValueChange = { recipeUrl = it },
+                    label = { Text("菜谱 API 地址") },
+                    singleLine = true,
+                    modifier = Modifier.fillMaxWidth(),
+                )
+                Row(horizontalArrangement = Arrangement.End, modifier = Modifier.fillMaxWidth()) {
+                    TextButton(onClick = {
+                        vm.saveApiUrls(apiUrl, recipeUrl)
+                        ApiClient.apiBaseUrl = apiUrl
+                        ApiClient.recipeApiUrl = recipeUrl
+                    }) { Text("保存并应用") }
                 }
             }
         }

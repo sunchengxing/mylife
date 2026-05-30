@@ -2,12 +2,17 @@ package com.mylife.app.viewmodel
 
 import android.app.Application
 import androidx.lifecycle.*
+import androidx.datastore.preferences.core.edit
+import androidx.datastore.preferences.core.stringPreferencesKey
+import androidx.datastore.preferences.preferencesDataStore
 import com.mylife.app.MyLifeApp
 import com.mylife.app.data.Record
 import com.mylife.app.data.StatsResponse
 import com.mylife.app.util.ApiClient
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import java.util.Date
 
@@ -36,6 +41,13 @@ data class AuthState(
     val isSyncing: Boolean = false,
     val lastSync: String = "",
 )
+
+data class SettingsState(
+    val apiBaseUrl: String = ApiClient.apiBaseUrl,
+    val recipeApiUrl: String = ApiClient.recipeApiUrl,
+)
+
+private val Context.dataStore by preferencesDataStore("settings")
 
 class RecordViewModel(application: Application) : AndroidViewModel(application) {
     private val dao = (application as MyLifeApp).database.recordDao()
@@ -87,6 +99,7 @@ class RecordViewModel(application: Application) : AndroidViewModel(application) 
 
 class ProfileViewModel(application: Application) : AndroidViewModel(application) {
     private val dao = (application as MyLifeApp).database.recordDao()
+    private val dataStore = application.dataStore
 
     private val _stats = MutableStateFlow(StatsState())
     val stats: StateFlow<StatsState> = _stats
@@ -94,8 +107,30 @@ class ProfileViewModel(application: Application) : AndroidViewModel(application)
     private val _auth = MutableStateFlow(AuthState(isLoggedIn = ApiClient.getToken() != null))
     val auth: StateFlow<AuthState> = _auth
 
+    private val _settings = MutableStateFlow(SettingsState())
+    val settings: StateFlow<SettingsState> = _settings
+
     init {
         loadStats()
+    }
+
+    fun loadSettings() {
+        viewModelScope.launch {
+            val prefs = dataStore.data.map { it }.first()
+            val savedApi = prefs[stringPreferencesKey("api_base_url")]
+            val savedRecipe = prefs[stringPreferencesKey("recipe_api_url")]
+            if (savedApi != null) ApiClient.apiBaseUrl = savedApi
+            if (savedRecipe != null) ApiClient.recipeApiUrl = savedRecipe
+            _settings.value = SettingsState(ApiClient.apiBaseUrl, ApiClient.recipeApiUrl)
+        }
+    }
+
+    fun saveApiUrls(apiUrl: String, recipeUrl: String) {
+        viewModelScope.launch {
+            dataStore.edit { it[stringPreferencesKey("api_base_url")] = apiUrl }
+            dataStore.edit { it[stringPreferencesKey("recipe_api_url")] = recipeUrl }
+            _settings.value = SettingsState(apiUrl, recipeUrl)
+        }
     }
 
     fun loadStats() {

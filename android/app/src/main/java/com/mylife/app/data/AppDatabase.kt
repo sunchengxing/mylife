@@ -30,7 +30,7 @@ abstract class AppDatabase : RoomDatabase() {
                     context.applicationContext,
                     AppDatabase::class.java,
                     "mylife",
-                ).fallbackToDestructiveMigrationFrom(1)
+                ).fallbackToDestructiveMigration()
                     .build().also { INSTANCE = it }
             }
         }
