@@ -1,0 +1,14 @@
+[Unit]
+Description=Recipe API (Solon-web)
+After=network.target mysql.service
+
+[Service]
+Type=simple
+User=root
+ExecStart=/usr/bin/java -jar /root/recipe-api/target/recipe-api-1.0.0.jar
+Restart=on-failure
+RestartSec=5
+WorkingDirectory=/root/recipe-api
+
+[Install]
+WantedBy=multi-user.target
