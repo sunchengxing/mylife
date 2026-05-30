@@ -147,7 +147,7 @@ private fun RecipeGrid(
             RecipeCard(recipe = recipe, onClick = { onClick(recipe.id) })
         }
         if (canLoadMore) {
-            item(span = StaggeredGridCells.Full) {
+            item {
                 Box(
                     modifier = Modifier.fillMaxWidth().padding(16.dp),
                     contentAlignment = Alignment.Center,

@@ -6,6 +6,8 @@ import com.mylife.app.MyLifeApp
 import com.mylife.app.data.Record
 import com.mylife.app.data.StatsResponse
 import com.mylife.app.util.ApiClient
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import java.util.Date
 
@@ -38,8 +40,8 @@ data class AuthState(
 class RecordViewModel(application: Application) : AndroidViewModel(application) {
     private val dao = (application as MyLifeApp).database.recordDao()
 
-    private val _state = MutableLiveData<RecordsState>()
-    val state: LiveData<RecordsState> = _state
+    private val _state = MutableStateFlow(RecordsState())
+    val state: StateFlow<RecordsState> = _state
 
     private var currentStore = "clothing"
 
@@ -50,7 +52,7 @@ class RecordViewModel(application: Application) : AndroidViewModel(application) 
 
     fun loadRecords() {
         viewModelScope.launch {
-            _state.value = _state.value?.copy(isLoading = true) ?: RecordsState(isLoading = true)
+            _state.value = _state.value.copy(isLoading = true)
             val items = dao.getByStore(currentStore)
             _state.value = RecordsState(items = items, isLoading = false)
         }
@@ -86,14 +88,13 @@ class RecordViewModel(application: Application) : AndroidViewModel(application) 
 class ProfileViewModel(application: Application) : AndroidViewModel(application) {
     private val dao = (application as MyLifeApp).database.recordDao()
 
-    private val _stats = MutableLiveData<StatsState>()
-    val stats: LiveData<StatsState> = _stats
+    private val _stats = MutableStateFlow(StatsState())
+    val stats: StateFlow<StatsState> = _stats
 
-    private val _auth = MutableLiveData<AuthState>()
-    val auth: LiveData<AuthState> = _auth
+    private val _auth = MutableStateFlow(AuthState(isLoggedIn = ApiClient.getToken() != null))
+    val auth: StateFlow<AuthState> = _auth
 
     init {
-        _auth.value = AuthState(isLoggedIn = ApiClient.getToken() != null)
         loadStats()
     }
 
@@ -154,10 +155,9 @@ class ProfileViewModel(application: Application) : AndroidViewModel(application)
 
     fun sync() {
         viewModelScope.launch {
-            _auth.value = _auth.value?.copy(isSyncing = true)
+            _auth.value = _auth.value.copy(isSyncing = true)
             try {
-                // Push local changes
-                val since = Date(0) // TODO: use lastSyncTime from DataStore
+                val since = Date(0)
                 val localChanges = dao.getUpdatedSince(since)
                 if (localChanges.isNotEmpty()) {
                     ApiClient.api.syncPush(com.mylife.app.data.SyncPayload(
@@ -170,7 +170,6 @@ class ProfileViewModel(application: Application) : AndroidViewModel(application)
                         }
                     ))
                 }
-                // Pull server changes
                 val serverRecords = ApiClient.api.syncPull().records
                 if (serverRecords.isNotEmpty()) {
                     dao.upsertAll(serverRecords.map { dto ->
@@ -182,9 +181,9 @@ class ProfileViewModel(application: Application) : AndroidViewModel(application)
                     })
                 }
                 loadStats()
-                _auth.value = _auth.value?.copy(isSyncing = false, lastSync = Date().toString())
+                _auth.value = _auth.value.copy(isSyncing = false, lastSync = Date().toString())
             } catch (_: Exception) {
-                _auth.value = _auth.value?.copy(isSyncing = false)
+                _auth.value = _auth.value.copy(isSyncing = false)
             }
         }
     }
