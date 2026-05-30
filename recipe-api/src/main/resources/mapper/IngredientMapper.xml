@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.recipe.mapper.IngredientMapper">
+
+    <select id="findByRecipeId" resultType="com.recipe.entity.Ingredient">
+        SELECT id, recipe_id as recipeId, name, amount, type
+        FROM ingredients WHERE recipe_id = #{recipeId}
+        ORDER BY type, id
+    </select>
+
+    <select id="findByRecipeIdAndType" resultType="com.recipe.entity.Ingredient">
+        SELECT id, recipe_id as recipeId, name, amount, type
+        FROM ingredients WHERE recipe_id = #{recipeId} AND type = #{type}
+        ORDER BY id
+    </select>
+
+</mapper>

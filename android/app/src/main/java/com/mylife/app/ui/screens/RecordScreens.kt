@@ -83,7 +83,7 @@ fun ClothingScreen(vm: RecordViewModel = viewModel()) {
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun FoodScreen(vm: RecordViewModel = viewModel()) {
+fun FoodRecordScreen(vm: RecordViewModel = viewModel()) {
     val state by vm.state.collectAsState()
     var showAddDialog by remember { mutableStateOf(false) }
     var editRecord by remember { mutableStateOf<Record?>(null) }

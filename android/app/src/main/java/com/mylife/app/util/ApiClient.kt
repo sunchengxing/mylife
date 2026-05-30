@@ -3,6 +3,7 @@ package com.mylife.app.util
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import com.mylife.app.data.ApiService
+import com.mylife.app.data.recipe.RecipeApiService
 import okhttp3.Interceptor
 import okhttp3.OkHttpClient
 import retrofit2.Retrofit
@@ -11,6 +12,7 @@ import java.util.concurrent.TimeUnit
 
 object ApiClient {
     private const val BASE_URL = "http://10.0.2.2:8080/api/"  // emulator -> host localhost
+    private const val RECIPE_URL = "http://10.0.2.2:8081/"   // recipe-api
 
     private var jwtToken: String? = null
 
@@ -42,4 +44,11 @@ object ApiClient {
         .addConverterFactory(GsonConverterFactory.create(gson))
         .build()
         .create(ApiService::class.java)
+
+    val recipeApi: RecipeApiService = Retrofit.Builder()
+        .baseUrl(RECIPE_URL)
+        .client(client)
+        .addConverterFactory(GsonConverterFactory.create(gson))
+        .build()
+        .create(RecipeApiService::class.java)
 }

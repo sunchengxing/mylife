@@ -11,3 +11,6 @@ desktop/build/
 *.db-wal
 mylife-server
 backend/mylife-server
+crawl_xiangha.py
+recipe-api/target/
+recipe-api/app.log

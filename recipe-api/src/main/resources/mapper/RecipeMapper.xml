@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.recipe.mapper.RecipeMapper">
+
+    <select id="findByCategory" resultType="com.recipe.entity.Recipe">
+        SELECT id, title, author, author_url as authorUrl, cover_img as coverImg,
+               views, favorites, category, tip, created_at as createdAt, updated_at as updatedAt
+        FROM recipes
+        <where>
+            <if test="category != null and category != ''">
+                category = #{category}
+            </if>
+        </where>
+        ORDER BY views DESC
+        LIMIT #{offset}, #{limit}
+    </select>
+
+    <select id="countByCategory" resultType="long">
+        SELECT COUNT(*) FROM recipes
+        <where>
+            <if test="category != null and category != ''">
+                category = #{category}
+            </if>
+        </where>
+    </select>
+
+    <select id="search" resultType="com.recipe.entity.Recipe">
+        SELECT id, title, author, author_url as authorUrl, cover_img as coverImg,
+               views, favorites, category, tip, created_at as createdAt, updated_at as updatedAt
+        FROM recipes
+        WHERE title LIKE CONCAT('%', #{q}, '%')
+        ORDER BY views DESC
+        LIMIT #{offset}, #{limit}
+    </select>
+
+    <select id="countSearch" resultType="long">
+        SELECT COUNT(*) FROM recipes WHERE title LIKE CONCAT('%', #{q}, '%')
+    </select>
+
+    <select id="findById" resultType="com.recipe.entity.Recipe">
+        SELECT id, title, author, author_url as authorUrl, cover_img as coverImg,
+               views, favorites, category, tip, created_at as createdAt, updated_at as updatedAt
+        FROM recipes WHERE id = #{id}
+    </select>
+
+    <select id="findRandom" resultType="com.recipe.entity.Recipe">
+        SELECT id, title, author, author_url as authorUrl, cover_img as coverImg,
+               views, favorites, category, tip, created_at as createdAt, updated_at as updatedAt
+        FROM recipes WHERE cover_img != '' AND cover_img IS NOT NULL
+        ORDER BY RAND() LIMIT 1
+    </select>
+
+    <select id="findByIngredient" resultType="com.recipe.entity.Recipe">
+        SELECT DISTINCT r.id, r.title, r.author, r.author_url as authorUrl, r.cover_img as coverImg,
+               r.views, r.favorites, r.category, r.tip, r.created_at as createdAt, r.updated_at as updatedAt
+        FROM recipes r
+        INNER JOIN ingredients i ON r.id = i.recipe_id
+        WHERE i.name LIKE CONCAT('%', #{ingredient}, '%')
+        ORDER BY r.views DESC
+        LIMIT #{offset}, #{limit}
+    </select>
+
+</mapper>

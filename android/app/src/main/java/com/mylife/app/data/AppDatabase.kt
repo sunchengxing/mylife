@@ -2,11 +2,24 @@ package com.mylife.app.data
 
 import androidx.room.*
 import com.mylife.app.data.converter.DateConverter
+import com.mylife.app.data.recipe.CachedRecipe
+import com.mylife.app.data.recipe.CachedIngredient
+import com.mylife.app.data.recipe.CachedStep
+import com.mylife.app.data.recipe.CachedRecipeDao
+import com.mylife.app.data.recipe.CachedIngredientDao
+import com.mylife.app.data.recipe.CachedStepDao
 
-@Database(entities = [Record::class], version = 1, exportSchema = false)
+@Database(
+    entities = [Record::class, CachedRecipe::class, CachedIngredient::class, CachedStep::class],
+    version = 2,
+    exportSchema = false,
+)
 @TypeConverters(DateConverter::class)
 abstract class AppDatabase : RoomDatabase() {
     abstract fun recordDao(): RecordDao
+    abstract fun cachedRecipeDao(): CachedRecipeDao
+    abstract fun cachedIngredientDao(): CachedIngredientDao
+    abstract fun cachedStepDao(): CachedStepDao
 
     companion object {
         @Volatile private var INSTANCE: AppDatabase? = null
@@ -16,8 +29,9 @@ abstract class AppDatabase : RoomDatabase() {
                 INSTANCE ?: Room.databaseBuilder(
                     context.applicationContext,
                     AppDatabase::class.java,
-                    "mylife"
-                ).build().also { INSTANCE = it }
+                    "mylife",
+                ).fallbackToDestructiveMigrationFrom(1)
+                    .build().also { INSTANCE = it }
             }
         }
     }

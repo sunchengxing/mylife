@@ -40,12 +40,13 @@ fun MyLifeNavHost() {
                 title = {
                     val route = currentDestination?.route
                     Text(
-                        when (route) {
-                            "clothing" -> "衣橱"
-                            "food" -> "美食"
-                            "housing" -> "居住"
-                            "transport" -> "出行"
-                            "profile" -> "我的"
+                        when {
+                            route?.startsWith("recipe") == true -> "菜谱详情"
+                            route == "clothing" -> "衣橱"
+                            route == "food" -> "美食"
+                            route == "housing" -> "居住"
+                            route == "transport" -> "出行"
+                            route == "profile" -> "我的"
                             else -> "衣食住行"
                         }
                     )
@@ -82,10 +83,18 @@ fun MyLifeNavHost() {
             modifier = Modifier.padding(innerPadding)
         ) {
             composable("clothing") { ClothingScreen() }
-            composable("food") { FoodScreen() }
+            composable("food") {
+                FoodScreen(onRecipeClick = { id ->
+                    navController.navigate("recipe/$id")
+                })
+            }
             composable("housing") { HousingScreen() }
             composable("transport") { TransportScreen() }
             composable("profile") { ProfileScreen() }
+            composable("recipe/{id}") { backStackEntry ->
+                val id = backStackEntry.arguments?.getString("id")?.toLong() ?: return@composable
+                RecipeDetailScreen(recipeId = id, onBack = { navController.popBackStack() })
+            }
         }
     }
 }

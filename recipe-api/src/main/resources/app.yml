@@ -1,0 +1,21 @@
+solon.app:
+  name: recipe-api
+
+server.port: 8081
+
+solon.dataSources:
+  db1!:
+    class: "com.zaxxer.hikari.HikariDataSource"
+    jdbcUrl: "jdbc:mysql://localhost:3306/xiangha?useUnicode=true&characterEncoding=UTF-8&serverTimezone=Asia/Shanghai"
+    driverClassName: "com.mysql.cj.jdbc.Driver"
+    username: root
+    password: mylife123
+
+mybatis.db1:
+  typeAliases:
+    - "com.recipe.entity"
+  mappers:
+    - "classpath*:mapper/*.xml"
+  configuration:
+    cacheEnabled: false
+    mapUnderscoreToCamelCase: true
