@@ -42,6 +42,9 @@ jobs:
       - name: Build Debug APK
         working-directory: android
         run: ./gradlew assembleDebug --no-daemon
+        env:
+          API_BASE_URL: ${{ vars.API_BASE_URL || 'http://10.0.2.2:8080/api/' }}
+          RECIPE_API_URL: ${{ vars.RECIPE_API_URL || 'http://10.0.2.2:8081/' }}
 
       - name: Upload APK
         uses: actions/upload-artifact@v4
@@ -53,6 +56,9 @@ jobs:
       - name: Build Release APK (unsigned)
         working-directory: android
         run: ./gradlew assembleRelease --no-daemon
+        env:
+          API_BASE_URL: ${{ vars.API_BASE_URL || 'http://10.0.2.2:8080/api/' }}
+          RECIPE_API_URL: ${{ vars.RECIPE_API_URL || 'http://10.0.2.2:8081/' }}
 
       - name: Upload Release APK
         uses: actions/upload-artifact@v4

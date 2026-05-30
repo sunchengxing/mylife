@@ -12,10 +12,20 @@ android {
         applicationId = "com.mylife.app"
         minSdk = 26
         targetSdk = 34
-        versionCode = 1
-        versionName = "1.0"
+        versionCode = 2
+        versionName = "1.1"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+
+        // Configurable backend URLs (override via -P at build time or env vars)
+        val apiBaseUrl = project.findProperty("API_BASE_URL") as? String
+            ?: System.getenv("API_BASE_URL")
+            ?: "http://10.0.2.2:8080/api/"
+        val recipeApiUrl = project.findProperty("RECIPE_API_URL") as? String
+            ?: System.getenv("RECIPE_API_URL")
+            ?: "http://10.0.2.2:8081/"
+        buildConfigField("String", "API_BASE_URL", "\"$apiBaseUrl\"")
+        buildConfigField("String", "RECIPE_API_URL", "\"$recipeApiUrl\"")
     }
 
     buildTypes {
@@ -36,6 +46,7 @@ android {
 
     buildFeatures {
         compose = true
+        buildConfig = true
     }
 
     composeOptions {
