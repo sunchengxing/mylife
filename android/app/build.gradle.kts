@@ -20,10 +20,10 @@ android {
         // Configurable backend URLs (override via -P at build time or env vars)
         val apiBaseUrl = project.findProperty("API_BASE_URL") as? String
             ?: System.getenv("API_BASE_URL")
-            ?: "http://10.0.2.2:8080/api/"
+            ?: "http://49.12.223.172:8080/api/"
         val recipeApiUrl = project.findProperty("RECIPE_API_URL") as? String
             ?: System.getenv("RECIPE_API_URL")
-            ?: "http://10.0.2.2:8081/"
+            ?: "http://49.12.223.172:8081/"
         buildConfigField("String", "API_BASE_URL", "\"$apiBaseUrl\"")
         buildConfigField("String", "RECIPE_API_URL", "\"$recipeApiUrl\"")
     }
